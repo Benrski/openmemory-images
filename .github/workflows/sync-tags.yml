@@ -12,40 +12,27 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
 
-      - name: Mirror upstream tags
+      - name: Sync latest v* tag from source
+        shell: bash
         run: |
-          set -euo pipefail
+          set -e
+          SOURCE_REPO=mem0ai/mem0
 
-          upstream_repo="https://github.com/mem0ai/mem0.git"
+          LATEST_TAG=$(git ls-remote --tags --refs https://github.com/${SOURCE_REPO}.git 'v*' \
+            | awk '{print $2}' \
+            | sed 's#.*/##' \
+            | sort -V \
+            | tail -n1)
 
-          # Fetch upstream tags into a separate namespace to avoid polluting local refs/tags
-          git fetch --quiet "$upstream_repo" "+refs/tags/*:refs/upstream-tags/*"
+          [ -n "$LATEST_TAG" ] || { echo "No v* tags found upstream"; exit 0; }
 
-          # Pick the latest 'v*' tag by creation time (works for annotated and lightweight tags)
-          latest_tag=$(git for-each-ref --sort=-creatordate --format='%(refname:strip=2)' refs/upstream-tags/v* | head -n1 || true)
-          if [ -z "${latest_tag}" ]; then
-            echo "No upstream v* tags found"
+          if git ls-remote --tags origin "refs/tags/${LATEST_TAG}" | grep -q "${LATEST_TAG}$"; then
+            echo "Tag ${LATEST_TAG} already exists; skipping"
             exit 0
           fi
 
-          # If already present on origin, nothing to do
-          if git ls-remote --tags --refs origin "refs/tags/${latest_tag}" | grep -q .; then
-            echo "Latest upstream tag '${latest_tag}' already exists on origin"
-            exit 0
-          fi
-
-          # Ensure we have the tag locally; create only if missing
-          if git rev-parse -q --verify "refs/tags/${latest_tag}" >/dev/null; then
-            echo "Tag '${latest_tag}' exists locally but not on origin; pushing."
-          else
-            echo "Creating local tag '${latest_tag}'"
-            git tag "${latest_tag}"
-          fi
-          git push origin "refs/tags/${latest_tag}"
-          echo "Pushed tag '${latest_tag}' to origin."
+          git tag "${LATEST_TAG}"
+          git push origin "refs/tags/${LATEST_TAG}"
