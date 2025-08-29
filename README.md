@@ -12,7 +12,7 @@ Pre-built Docker images for the OpenMemory subproject from mem0ai/mem0, publishe
 
 ## Trigger a build
 
-1. Create and push a tag in this repo that matches an upstream tag, for example: v0.1.116.
+1. Create and push a tag in this repo that matches an upstream tag, for example: v0.1.115.
 
 ## Pull images
 
