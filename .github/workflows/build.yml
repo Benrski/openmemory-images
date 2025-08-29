@@ -1,0 +1,34 @@
+name: Build and publish OpenMemory images
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v6
+        with:
+          context: https://github.com/mem0ai/mem0.git#${{ github.ref_name }}:openmemory/api
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/openmemory-api:${{ github.ref_name }}
+
+      - name: Build and push UI image
+        uses: docker/build-push-action@v6
+        with:
+          context: https://github.com/mem0ai/mem0.git#${{ github.ref_name }}:openmemory/ui
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/openmemory-ui:${{ github.ref_name }}
