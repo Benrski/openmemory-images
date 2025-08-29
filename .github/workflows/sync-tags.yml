@@ -19,9 +19,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          SOURCE_REPO=mem0ai/mem0
-
-          LATEST_TAG=$(git ls-remote --tags --refs https://github.com/${SOURCE_REPO}.git 'v*' \
+          LATEST_TAG=$(git ls-remote --tags --refs https://github.com/mem0ai/mem0.git 'v*' \
             | awk '{print $2}' \
             | sed 's#.*/##' \
             | sort -V \
