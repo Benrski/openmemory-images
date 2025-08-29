@@ -35,12 +35,17 @@ jobs:
           fi
 
           # If already present on origin, nothing to do
-          if git ls-remote --tags --refs origin "${latest_tag}" | grep -q .; then
+          if git ls-remote --tags --refs origin "refs/tags/${latest_tag}" | grep -q .; then
             echo "Latest upstream tag '${latest_tag}' already exists on origin"
             exit 0
           fi
 
-          echo "Creating and pushing latest tag: ${latest_tag}"
-          git tag "${latest_tag}"
+          # Ensure we have the tag locally; create only if missing
+          if git rev-parse -q --verify "refs/tags/${latest_tag}" >/dev/null; then
+            echo "Tag '${latest_tag}' exists locally but not on origin; pushing."
+          else
+            echo "Creating local tag '${latest_tag}'"
+            git tag "${latest_tag}"
+          fi
           git push origin "refs/tags/${latest_tag}"
-          echo "Done."
+          echo "Pushed tag '${latest_tag}' to origin."
