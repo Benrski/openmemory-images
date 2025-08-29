@@ -34,9 +34,9 @@ jobs:
             exit 0
           fi
 
-          # If already present locally, nothing to do
-          if git rev-parse -q --verify "refs/tags/${latest_tag}" >/dev/null; then
-            echo "Latest upstream tag '${latest_tag}' already exists locally"
+          # If already present on origin, nothing to do
+          if git ls-remote --tags --refs origin "${latest_tag}" | grep -q .; then
+            echo "Latest upstream tag '${latest_tag}' already exists on origin"
             exit 0
           fi
 
