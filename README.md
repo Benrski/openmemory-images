@@ -2,10 +2,8 @@
 
 Pre-built Docker images for the OpenMemory subproject from mem0ai/mem0, published to GHCR.
 
-- API: ghcr.io/<OWNER>/openmemory-api
-- UI: ghcr.io/<OWNER>/openmemory-ui
-
-Replace <OWNER> with the GitHub user/org that owns this repo (usually lowercase for GHCR).
+- API: ghcr.io/benrski/openmemory-api
+- UI: ghcr.io/benrski/openmemory-ui
 
 ## How it works
 
@@ -19,8 +17,8 @@ Replace <OWNER> with the GitHub user/org that owns this repo (usually lowercase 
 ## Pull images
 
 ```bash
-docker pull ghcr.io/<OWNER>/openmemory-api:v0.1.116
-docker pull ghcr.io/<OWNER>/openmemory-ui:v0.1.116
+docker pull ghcr.io/benrski/openmemory-api:latest
+docker pull ghcr.io/benrski/openmemory-ui:latest
 ```
 
 ## Notes
